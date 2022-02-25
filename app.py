@@ -100,5 +100,39 @@ def load_user(user_id):
     user  = user_schema.dump(exist)
     return user_schema.jsonify(user)
 
+@app.route('/update_account/<user_id>', methods=['PUT'])
+def update_account(user_id):
+    conn = db_connection()
+    cursor = conn.cursor()
+    user_image = request.json.get('user_image')
+    user_fname = request.json.get('user_fname')
+    user_mname = request.json.get('user_mname')
+    user_lname = request.json.get('user_lname')
+    username = request.json.get('username')
+    email = request.json.get('email')
+    
+    update_query = """ UPDATE user
+                    SET user_image='{}',
+                        user_fname='{}',
+                        user_mname='{}',
+                        user_lname='{}',
+                        username='{}',
+                        email='{}'
+                    WHERE user_id={}"""
+    
+    cursor.execute(update_query.format(user_image,
+                                    user_fname,
+                                    user_mname,
+                                    user_lname,
+                                    username,
+                                    email, 
+                                    user_id))
+    conn.commit()
+
+    cursor.execute("SELECT * FROM user WHERE user_id={}".format(user_id))
+    account = cursor.fetchone()
+
+    return user_schema.jsonify(account)
+
 if __name__ == "__main__":
     app.run()
