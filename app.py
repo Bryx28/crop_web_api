@@ -4,6 +4,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from sqlalchemy import desc
 import pymysql
+import datetime
+import random
 
 
 app = Flask(__name__)
@@ -41,6 +43,17 @@ class User(db.Model,UserMixin):
     def  __repr__(self):
         return f"User({self.username} - {self.user_fname} {self.user_lname})"
 
+class Recommendations(db.Model):
+    __tablename__ = "recommendations"
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.String(50), nullable=False)
+    device_number = db.Column(db.String(20), nullable=False)
+    recommended = db.Column(db.String(50), nullable=False)
+    nitrogen_content = db.Column(db.Integer, nullable=False)
+    phosphorous_content = db.Column(db.Integer, nullable=False)
+    potassium_content = db.Column(db.Integer, nullable=False)
+    ph_level_content = db.Column(db.Integer, nullable=False)
+
 db.create_all()
 
 class UserSchema(ma.Schema):
@@ -48,8 +61,17 @@ class UserSchema(ma.Schema):
         fields = ("user_id", "user_image", "user_fname", "user_mname", 
                 "user_lname", "username", "email", "password")
 
+class RecommendationSchema(ma.Schema):
+    class Meta:
+        fields = ("id", "date", "device_number", "recommended",
+                    "nitrogen_content", "phosphorous_content",
+                    "potassium_content", "ph_level_content")
+
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
+
+crop_schema = RecommendationSchema()
+crops_schema = RecommendationSchema(many=True)
 
 @app.route('/create', methods=['POST'])
 def create():
@@ -71,6 +93,55 @@ def create():
     db.session.commit()
 
     return user_schema.jsonify(new_user)
+
+@app.route('/recommendation', methods=['GET', 'POST'])
+def recommendation():
+    conn = db_connection()
+    cursor = conn.cursor()
+    if request.method == "POST":
+        now = datetime.datetime.now()
+        current_date = """{}/{}/{} {}:{}:{}""".format(now.month,
+                                                      now.day,
+                                                      now.year,
+                                                      now.hour,
+                                                      now.minute,
+                                                      now.second)
+        device_num = request.json.get('device_number')
+        nitrogen_content = request.json.get('nitrogen')
+        phosphorous_content = request.json.get('phosphorous')
+        potassium_content = request.json.get('potassium')
+        ph_level_content = request.json.get('ph_level')
+        recommended_crop = random.choice(['Rice', 'Maize', 'Corn', 'Banana', 'Water'])
+
+        new_prediction = Recommendations(date=current_date,
+                                         device_number=device_num,
+                                         recommended = recommended_crop,
+                                         nitrogen_content=nitrogen_content,
+                                         phosphorous_content=phosphorous_content,
+                                         potassium_content=potassium_content,
+                                         ph_level_content=ph_level_content)
+
+        db.session.add(new_prediction)
+        db.session.commit()
+        return crop_schema.jsonify(new_prediction)
+    
+    if request.method == "GET":
+        table_recommendation = []
+        cursor.execute("SELECT * FROM recommendations")
+        for a in cursor.fetchall():
+             table_recommendation.append(a)
+        if table_recommendation is not None:
+            return jsonify(table_recommendation)
+        else:
+            no_data = Recommendations(date=" ",
+                                         device_number=" ",
+                                         recommended = " ",
+                                         nitrogen_content=" ",
+                                         phosphorous_content=" ",
+                                         potassium_content=" ",
+                                         ph_level_content=" ")
+            return crop_schema.jsonify()
+        
 
 @app.route('/existing_username/<username>', methods=['GET'])
 def existing_username(username):
