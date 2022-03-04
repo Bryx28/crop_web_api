@@ -191,7 +191,7 @@ def update_account(user_id):
     username = request.json.get('username')
     email = request.json.get('email')
     
-    update_query = """ UPDATE user
+    update_query = """ UPDATE public."user"
                     SET user_image='{}',
                         user_fname='{}',
                         user_mname='{}',
