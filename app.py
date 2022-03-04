@@ -11,7 +11,7 @@ import psycopg2.extras
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://kwqxcelviwbiyf:570b87e2f2fa138774cb2df0572e7359316ea44c17be8d7dcfe56192724c8f45@ec2-3-211-228-251.compute-1.amazonaws.com:5432/dfqt1p61srvec0'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://kwqxcelviwbiyf:570b87e2f2fa138774cb2df0572e7359316ea44c17be8d7dcfe56192724c8f45@ec2-3-211-228-251.compute-1.amazonaws.com:5432/dfqt1p61srvec0'
 app.config['SECRET_KEY'] = 'tH3s3iS@s3cr3tk3Y'
 
 db = SQLAlchemy(app)
