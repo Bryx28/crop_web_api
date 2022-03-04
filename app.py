@@ -6,26 +6,26 @@ from sqlalchemy import desc
 import pymysql
 import datetime
 import random
+import psycopg2
+import psycopg2.extras
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://sql6475255:nYTHkyTUtR@sql6.freesqldatabase.com/sql6475255'
-app.config['SECRET_KEY'] = 'secret key'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://kwqxcelviwbiyf:570b87e2f2fa138774cb2df0572e7359316ea44c17be8d7dcfe56192724c8f45@ec2-3-211-228-251.compute-1.amazonaws.com:5432/dfqt1p61srvec0'
+app.config['SECRET_KEY'] = 'tH3s3iS@s3cr3tk3Y'
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 def db_connection():
     try:
-        conn = pymysql.connect(
-            host='sql6.freesqldatabase.com',
-            database='sql6475255',
-            user='sql6475255',
-            password='nYTHkyTUtR',
-            charset='utf8mb4',
-            cursorclass=pymysql.cursors.DictCursor
-        )
-    except pymysql.Error as e:
+        conn = psycopg2.connect(
+                host='ec2-3-211-228-251.compute-1.amazonaws.com',
+                database='dfqt1p61srvec0',
+                user='kwqxcelviwbiyf',
+                password='570b87e2f2fa138774cb2df0572e7359316ea44c17be8d7dcfe56192724c8f45'
+                )
+    except psycopg2.Error as e:
         print(e)
     return conn
 
@@ -39,9 +39,20 @@ class User(db.Model,UserMixin):
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
+    posts = db.relationship('Post', backref='author', lazy=True)
 
     def  __repr__(self):
         return f"User({self.username} - {self.user_fname} {self.user_lname})"
+
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
+    content = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+
+    def __repr__(self):
+        return f"Post('{self.title}', '{self.date_posted}')"
 
 class Recommendations(db.Model):
     __tablename__ = "recommendations"
@@ -97,7 +108,7 @@ def create():
 @app.route('/recommendation', methods=['GET', 'POST'])
 def recommendation():
     conn = db_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     if request.method == "POST":
         now = datetime.datetime.now()
         current_date = """{}/{}/{} {}:{}:{}""".format(now.month,
@@ -146,7 +157,7 @@ def recommendation():
 @app.route('/existing_username/<username>', methods=['GET'])
 def existing_username(username):
     conn = db_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cursor.execute("SELECT * FROM user WHERE username='{}'".format(username))
     exist = cursor.fetchone()
     print(exist)
@@ -156,7 +167,7 @@ def existing_username(username):
 @app.route('/existing_email/<email>', methods=['GET'])
 def existing_email(email):
     conn = db_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cursor.execute("SELECT * FROM user WHERE email='{}'".format(email))
     exist = cursor.fetchone()
     user = user_schema.dump(exist)
@@ -165,7 +176,7 @@ def existing_email(email):
 @app.route('/load_user/<user_id>', methods=['GET'])
 def load_user(user_id):
     conn = db_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cursor.execute("SELECT * FROM user WHERE user_id={}".format(user_id))
     exist = cursor.fetchone()
     user  = user_schema.dump(exist)
@@ -174,7 +185,7 @@ def load_user(user_id):
 @app.route('/update_account/<user_id>', methods=['PUT'])
 def update_account(user_id):
     conn = db_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     user_image = request.json.get('user_image')
     user_fname = request.json.get('user_fname')
     user_mname = request.json.get('user_mname')
