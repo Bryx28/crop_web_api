@@ -157,9 +157,8 @@ def recommendation():
 def existing_username(username):
     conn = db_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cursor.execute("SELECT * FROM public.\"user\" WHERE 'username'='{}'".format(username))
+    cursor.execute("SELECT * FROM public.\"user\" WHERE username='{}'".format(username))
     exist = cursor.fetchone()
-    print(exist)
     user = user_schema.dump(exist)
     return user_schema.jsonify(user)
 
@@ -167,7 +166,7 @@ def existing_username(username):
 def existing_email(email):
     conn = db_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cursor.execute("SELECT * FROM public.\"user\" WHERE 'email'='{}'".format(email))
+    cursor.execute("SELECT * FROM public.\"user\" WHERE email='{}'".format(email))
     exist = cursor.fetchone()
     user = user_schema.dump(exist)
     return user_schema.jsonify(user)
@@ -176,7 +175,7 @@ def existing_email(email):
 def load_user(user_id):
     conn = db_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cursor.execute("SELECT * FROM public.\"user\" WHERE 'user_id'={}".format(user_id))
+    cursor.execute("SELECT * FROM public.\"user\" WHERE user_id={}".format(user_id))
     exist = cursor.fetchone()
     user  = user_schema.dump(exist)
     return user_schema.jsonify(user)
@@ -210,7 +209,7 @@ def update_account(user_id):
                                     user_id))
     conn.commit()
 
-    cursor.execute("SELECT * FROM public.\"user\" WHERE 'user_id'={}".format(user_id))
+    cursor.execute("SELECT * FROM public.\"user\" WHERE user_id={}".format(user_id))
     account = cursor.fetchone()
 
     return user_schema.jsonify(account)
