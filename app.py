@@ -9,7 +9,6 @@ import random
 import psycopg2
 import psycopg2.extras
 
-
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://kwqxcelviwbiyf:570b87e2f2fa138774cb2df0572e7359316ea44c17be8d7dcfe56192724c8f45@ec2-3-211-228-251.compute-1.amazonaws.com:5432/dfqt1p61srvec0'
 app.config['SECRET_KEY'] = 'tH3s3iS@s3cr3tk3Y'
@@ -158,7 +157,7 @@ def recommendation():
 def existing_username(username):
     conn = db_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cursor.execute("SELECT * FROM user WHERE username='{}'".format(username))
+    cursor.execute("SELECT * FROM user WHERE 'username'='{}'".format(username))
     exist = cursor.fetchone()
     print(exist)
     user = user_schema.dump(exist)
@@ -168,7 +167,7 @@ def existing_username(username):
 def existing_email(email):
     conn = db_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cursor.execute("SELECT * FROM user WHERE email='{}'".format(email))
+    cursor.execute("SELECT * FROM user WHERE 'email'='{}'".format(email))
     exist = cursor.fetchone()
     user = user_schema.dump(exist)
     return user_schema.jsonify(user)
@@ -177,7 +176,7 @@ def existing_email(email):
 def load_user(user_id):
     conn = db_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cursor.execute("SELECT * FROM user WHERE user_id={}".format(user_id))
+    cursor.execute("SELECT * FROM user WHERE 'user_id'={}".format(user_id))
     exist = cursor.fetchone()
     user  = user_schema.dump(exist)
     return user_schema.jsonify(user)
@@ -211,7 +210,7 @@ def update_account(user_id):
                                     user_id))
     conn.commit()
 
-    cursor.execute("SELECT * FROM user WHERE user_id={}".format(user_id))
+    cursor.execute("SELECT * FROM user WHERE 'user_id'={}".format(user_id))
     account = cursor.fetchone()
 
     return user_schema.jsonify(account)
