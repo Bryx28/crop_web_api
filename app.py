@@ -141,7 +141,7 @@ def recommendation():
         for a in cursor.fetchall():
              table_recommendation.append(a)
         if table_recommendation is not None:
-            return crop_schema.jsonify(table_recommendation)
+            return crops_schema.jsonify(table_recommendation)
         else:
             no_data = Recommendations(date=" ",
                                          device_number=" ",
