@@ -174,6 +174,19 @@ def new_post():
 
     return post_schema.jsonify(new_post_created) 
 
+@app.route('/get_posts', methods=['GET'])
+def get_posts():
+    conn = db_connection()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    posts = []
+    cursor.execute("SELECT * FROM public.\"post\"")
+    for a in cursor.fetchall():
+         posts.append(a)
+    if posts is not None:
+        return crops_schema.jsonify(posts)
+    else:
+        return crop_schema.jsonify()
+
 @app.route('/existing_username/<username>', methods=['GET'])
 def existing_username(username):
     conn = db_connection()
