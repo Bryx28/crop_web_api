@@ -77,11 +77,18 @@ class RecommendationSchema(ma.Schema):
                     "nitrogen_content", "phosphorous_content",
                     "potassium_content", "ph_level_content")
 
+class PostSchema(ma.Schema):
+    class Meta:
+        fields = ("id", "title", "date_posted", "content", "user_id")
+
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 
 crop_schema = RecommendationSchema()
 crops_schema = RecommendationSchema(many=True)
+
+post_schema = PostSchema()
+posts_schema = PostSchema(many=True)
 
 @app.route('/create', methods=['POST'])
 def create():
@@ -151,7 +158,21 @@ def recommendation():
                                          potassium_content=" ",
                                          ph_level_content=" ")
             return crop_schema.jsonify()
-        
+
+@app.route('/new_post', methods=['POST'])
+def new_post():
+    title = request.json.get('title')
+    content = request.json.get('content')
+    author = request.json.get('author')
+
+    new_post_created = Post(title = title, 
+                    content = content, 
+                    user_id = author)
+    
+    db.session.add(new_post_created)
+    db.session.commit()
+
+    return post_schema.jsonify(new_post_created) 
 
 @app.route('/existing_username/<username>', methods=['GET'])
 def existing_username(username):
