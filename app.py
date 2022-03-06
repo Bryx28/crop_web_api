@@ -98,15 +98,13 @@ def create():
     username = request.json.get('username')
     email = request.json.get('email')
     password = request.json.get('password')
-    posts = Post(request.json.get('posts'))
 
     new_user = User(user_fname = user_fname, 
                     user_mname = user_mname, 
                     user_lname = user_lname,
                     username = username,
                     email = email,
-                    password = password,
-                    posts = posts)
+                    password = password)
     
     db.session.add(new_user)
     db.session.commit()
