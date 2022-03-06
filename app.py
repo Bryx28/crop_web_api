@@ -78,7 +78,7 @@ class RecommendationSchema(ma.Schema):
 
 class PostSchema(ma.Schema):
     class Meta:
-        fields = ("id", "title", "date_posted", "content", "user_id")
+        fields = ("id", "title", "date_posted", "content")
 
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
@@ -177,8 +177,9 @@ def get_posts():
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     posts = []
     cursor.execute("SELECT * FROM public.\"post\"")
-    for a in cursor.fetchall():
-         posts.append(a)
+    data = cursor.fetchall()
+    for row in data:
+         posts.append(row)
     if posts is not None:
         return crops_schema.jsonify(posts)
     else:
