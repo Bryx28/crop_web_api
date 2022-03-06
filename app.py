@@ -162,7 +162,6 @@ def recommendation():
 def new_post():
     title = request.json.get('title')
     content = request.json.get('content')
-    author = request.json.get('author')
 
     new_post_created = Post(title = title, 
                     content = content)
