@@ -38,7 +38,7 @@ class User(db.Model,UserMixin):
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
-    posts = db.relationship('post', backref='author', lazy=True)
+    #posts = db.relationship('post', backref='author', lazy=True)
 
     def  __repr__(self):
         return f"User({self.username} - {self.user_fname} {self.user_lname})"
@@ -98,13 +98,15 @@ def create():
     username = request.json.get('username')
     email = request.json.get('email')
     password = request.json.get('password')
+    posts = Post(request.json.get('posts'))
 
     new_user = User(user_fname = user_fname, 
                     user_mname = user_mname, 
                     user_lname = user_lname,
                     username = username,
                     email = email,
-                    password = password)
+                    password = password,
+                    posts = posts)
     
     db.session.add(new_user)
     db.session.commit()
