@@ -38,7 +38,6 @@ class User(db.Model,UserMixin):
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
-    #posts = db.relationship('post', backref='author', lazy=True)
 
     def  __repr__(self):
         return f"User({self.username} - {self.user_fname} {self.user_lname})"
@@ -48,7 +47,7 @@ class Post(db.Model):
     title = db.Column(db.String(100), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
     content = db.Column(db.Text, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    #user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
 
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"
@@ -166,8 +165,7 @@ def new_post():
     author = request.json.get('author')
 
     new_post_created = Post(title = title, 
-                    content = content, 
-                    user_id = author)
+                    content = content)
     
     db.session.add(new_post_created)
     db.session.commit()
