@@ -3,11 +3,10 @@ from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from sqlalchemy import desc
-import pymysql
-import datetime
-import random
-import psycopg2
+import datetime, random, psycopg2
+from datetime import timezone, timedelta
 import psycopg2.extras
+from converter import date_to_words, number_formatting
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://kwqxcelviwbiyf:570b87e2f2fa138774cb2df0572e7359316ea44c17be8d7dcfe56192724c8f45@ec2-3-211-228-251.compute-1.amazonaws.com:5432/dfqt1p61srvec0'
@@ -45,9 +44,10 @@ class User(db.Model,UserMixin):
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
-    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow)
+    date_posted = db.Column(db.String(50), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    #user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    user_id = db.Column(db.Integer,  nullable=False)
+    #db.ForeignKey('user.user_id')
 
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"
@@ -76,6 +76,10 @@ class RecommendationSchema(ma.Schema):
                     "nitrogen_content", "phosphorous_content",
                     "potassium_content", "ph_level_content")
 
+class UserPostSchema(ma.Schema):
+    class Meta:
+        fields = ("user_id", "user_image", "username")
+
 class PostSchema(ma.Schema):
     class Meta:
         fields = ("id", "title", "date_posted", "content")
@@ -85,6 +89,9 @@ users_schema = UserSchema(many=True)
 
 crop_schema = RecommendationSchema()
 crops_schema = RecommendationSchema(many=True)
+
+user_post_schema = UserPostSchema()
+user_posts_schema = UserPostSchema(many=True)
 
 post_schema = PostSchema()
 posts_schema = PostSchema(many=True)
@@ -115,13 +122,17 @@ def recommendation():
     conn = db_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     if request.method == "POST":
-        now = datetime.datetime.now()
-        current_date = """{}/{}/{} {}:{}:{}""".format(now.month,
-                                                      now.day,
+        now = datetime.datetime.now(timezone(timedelta(hours=8)))
+        word_month, str_day = date_to_words(now.month, now.day)
+        str_hour = number_formatting(now.hour)
+        str_minute = number_formatting(now.minute)
+        str_sec = number_formatting(now.second)
+        current_date = """{} {}, {} {}:{}:{}""".format(word_month,
+                                                      str_day,
                                                       now.year,
-                                                      now.hour,
-                                                      now.minute,
-                                                      now.second)
+                                                      str_hour,
+                                                      str_minute,
+                                                      str_sec)
         device_num = request.json.get('device_number')
         nitrogen_content = request.json.get('nitrogen')
         phosphorous_content = request.json.get('phosphorous')
@@ -160,11 +171,24 @@ def recommendation():
 
 @app.route('/new_post', methods=['POST'])
 def new_post():
+    
+    now = datetime.datetime.now(timezone(timedelta(hours=8)))
+    word_month, str_day = date_to_words(now.month, now.day)
+    str_hour = number_formatting(now.hour)
+    str_minute = number_formatting(now.minute)
+    str_sec = number_formatting(now.second)
+    current_date = """{} {}, {} {}:{}:{}""".format(word_month,
+                                                  str_day,
+                                                  now.year,
+                                                  str_hour,
+                                                  str_minute,
+                                                  str_sec)
     title = request.json.get('title')
     content = request.json.get('content')
-
+    
     new_post_created = Post(title = title, 
-                    content = content)
+                            content = content,
+                            date_posted = current_date)
     
     db.session.add(new_post_created)
     db.session.commit()
@@ -181,7 +205,19 @@ def get_posts():
     if posts is not None:
         return posts_schema.jsonify(posts)
     else:
+        return post_schema.jsonify()
 
+@app.route('/get_user_post_data', methods=['GET'])
+def get_user_post_data():
+    conn = db_connection()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    posts = []
+    cursor.execute("SELECT * FROM public.\"post\"")
+    for row in cursor.fetchall():
+         posts.append(row)
+    if posts is not None:
+        return posts_schema.jsonify(posts)
+    else:
         return post_schema.jsonify()
 
 @app.route('/existing_username/<username>', methods=['GET'])
