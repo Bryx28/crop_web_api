@@ -171,7 +171,6 @@ def recommendation():
 
 @app.route('/new_post', methods=['POST'])
 def new_post():
-    
     now = datetime.datetime.now(timezone(timedelta(hours=8)))
     word_month, str_day = date_to_words(now.month, now.day)
     str_hour = number_formatting(now.hour)
@@ -185,10 +184,12 @@ def new_post():
                                                   str_sec)
     title = request.json.get('title')
     content = request.json.get('content')
+    user = request.json.get('author')
     
     new_post_created = Post(title = title, 
                             content = content,
-                            date_posted = current_date)
+                            date_posted = current_date,
+                            user_id = user)
     
     db.session.add(new_post_created)
     db.session.commit()
