@@ -200,11 +200,9 @@ def get_posts():
     conn = db_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     posts = []
-    cursor.execute("SELECT * FROM public.\"post\"")
-    for row in cursor.fetchall():
-         posts.append(row)
+    data = Post.query.all()
     if posts is not None:
-        return posts_schema.jsonify(posts)
+        return jsonify(data)
     else:
         return post_schema.jsonify()
 
@@ -213,6 +211,7 @@ def get_user_post_data():
     conn = db_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     posts = []
+    data = []
     cursor.execute("SELECT * FROM public.\"post\"")
     for row in cursor.fetchall():
          posts.append(row)
