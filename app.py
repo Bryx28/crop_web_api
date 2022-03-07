@@ -154,7 +154,7 @@ def recommendation():
     
     if request.method == "GET":
         table_recommendation = []
-        cursor.execute("SELECT * FROM public.\"recommendations\" ORDER id BY DESC")
+        cursor.execute("SELECT * FROM public.\"recommendations\" ORDER BY id DESC")
         for a in cursor.fetchall():
              table_recommendation.append(a)
         if table_recommendation is not None:
