@@ -72,6 +72,7 @@ class Post(db.Model):
                     "user_id": self.user_id,
                     "author": self.author
                }
+        return data
 
 class Recommendations(db.Model):
     __tablename__ = "recommendations"
@@ -216,7 +217,7 @@ def get_posts():
     posts = []
     data = Post.query.all()
     if posts is not None:
-        return jsonify(data)
+        return jsonify(data.get_object)
     else:
         return post_schema.jsonify()
 
