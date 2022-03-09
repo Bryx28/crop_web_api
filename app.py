@@ -217,7 +217,7 @@ def get_posts():
     posts = []
     data = Post.query.all()
     if posts is not None:
-        return jsonify(data.get_object)
+        return jsonify(data)
     else:
         return post_schema.jsonify()
 
