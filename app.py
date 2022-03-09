@@ -66,6 +66,7 @@ class Post(db.Model):
     
     def get_object(self):
         data = {
+                    "id": self.id,
                     "title": self.title,
                     "date_posted": self.date_posted,
                     "content": self.content,
