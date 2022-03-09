@@ -212,14 +212,20 @@ def new_post():
 
 @app.route('/get_posts', methods=['GET'])
 def get_posts():
-    conn = db_connection()
-    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     posts = []
     data = Post.query.all()
     for index in range(len(data)):
         posts.append(data[-1-index].get_object())
     if posts is not None:
         return jsonify(posts)
+    else:
+        return post_schema.jsonify()
+
+@app.route('/post/<post_id>', methods=['GET'])
+def get_post(post_id):
+    data = Post.quert.get_or_404(post_id)
+    if data is not None:
+        return jsonify(data.get_object())
     else:
         return post_schema.jsonify()
 
