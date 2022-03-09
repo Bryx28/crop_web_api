@@ -216,24 +216,10 @@ def get_posts():
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     posts = []
     data = Post.query.all()
-    for post in data:
-        posts.append(post.get_object())
+    for index in range(len(data)):
+        posts.append(data[-1-index].get_object())
     if posts is not None:
         return jsonify(posts)
-    else:
-        return post_schema.jsonify()
-
-@app.route('/get_user_post_data', methods=['GET'])
-def get_user_post_data():
-    conn = db_connection()
-    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    posts = []
-    data = []
-    cursor.execute("SELECT * FROM public.\"post\"")
-    for row in cursor.fetchall():
-         posts.append(row)
-    if posts is not None:
-        return posts_schema.jsonify(posts)
     else:
         return post_schema.jsonify()
 
