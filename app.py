@@ -42,6 +42,18 @@ class User(db.Model,UserMixin):
     def  __repr__(self):
         return f"User({self.username} - {self.user_fname} {self.user_lname})"
 
+    def get_object(self):
+        data = {
+                    "user_id": self.user_id,
+                    "user_image": self.user_image,
+                    "user_fname": self.user_fname,
+                    "user_mname": self.user_mname,
+                    "user_lname": self.user_lname,
+                    "username": self.username,
+                    "email": self.email
+               }
+        return data
+
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -51,6 +63,15 @@ class Post(db.Model):
 
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"
+    
+    def get_object(self):
+        data = {
+                    "title": self.title,
+                    "date_posted": self.date_posted,
+                    "content": self.content,
+                    "user_id": self.user_id,
+                    "author": self.author
+               }
 
 class Recommendations(db.Model):
     __tablename__ = "recommendations"
@@ -61,7 +82,7 @@ class Recommendations(db.Model):
     nitrogen_content = db.Column(db.Integer, nullable=False)
     phosphorous_content = db.Column(db.Integer, nullable=False)
     potassium_content = db.Column(db.Integer, nullable=False)
-    ph_level_content = db.Column(db.Integer, nullable=False)
+    ph_level_content = db.Column(db.Float, nullable=False)
 
 db.create_all()
 
@@ -138,7 +159,7 @@ def recommendation():
         phosphorous_content = request.json.get('phosphorous')
         potassium_content = request.json.get('potassium')
         ph_level_content = request.json.get('ph_level')
-        recommended_crop = random.choice(['Rice', 'Maize', 'Corn', 'Banana', 'Water'])
+        recommended_crop = random.choice(['Rice', 'Maize', 'Corn', 'Banana', 'Watermelon'])
 
         new_prediction = Recommendations(date=current_date,
                                          device_number=device_num,
@@ -160,13 +181,6 @@ def recommendation():
         if table_recommendation is not None:
             return crops_schema.jsonify(table_recommendation)
         else:
-            no_data = Recommendations(date=" ",
-                                         device_number=" ",
-                                         recommended = " ",
-                                         nitrogen_content=" ",
-                                         phosphorous_content=" ",
-                                         potassium_content=" ",
-                                         ph_level_content=" ")
             return crop_schema.jsonify()
 
 @app.route('/new_post', methods=['POST'])
