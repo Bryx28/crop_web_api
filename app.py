@@ -104,7 +104,7 @@ class UserPostSchema(ma.Schema):
 
 class PostSchema(ma.Schema):
     class Meta:
-        fields = ("id", "title", "date_posted", "content")
+        fields = ("id", "title", "date_posted", "content", "")
 
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
@@ -216,8 +216,10 @@ def get_posts():
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     posts = []
     data = Post.query.all()
+    for post in data:
+        posts.append(post.get_object())
     if posts is not None:
-        return jsonify(data)
+        return jsonify(posts)
     else:
         return post_schema.jsonify()
 
