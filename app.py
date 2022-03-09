@@ -70,7 +70,7 @@ class Post(db.Model):
                     "date_posted": self.date_posted,
                     "content": self.content,
                     "user_id": self.user_id,
-                    "author": self.author
+                    "author": self.author.get_object()
                }
         return data
 
