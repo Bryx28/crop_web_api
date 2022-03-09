@@ -223,7 +223,7 @@ def get_posts():
 
 @app.route('/post/<post_id>', methods=['GET'])
 def get_post(post_id):
-    data = Post.quert.get_or_404(post_id)
+    data = Post.query.get_or_404(post_id)
     if data is not None:
         return jsonify(data.get_object())
     else:
