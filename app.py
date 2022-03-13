@@ -334,12 +334,12 @@ def delete_post(post_id):
     conn = db_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-    cursor.execute("DELETE FROM public.\"post\" WHERE id=5")
+    cursor.execute(f"DELETE FROM public.\"post\" WHERE id={post_id}")
     post = cursor.fetchone()
 
     conn.commit()
-
-    return post_schema.jsonify(post)
+    
+    return post_schema.jsonify()
 
 if __name__ == "__main__":
     app.run()
