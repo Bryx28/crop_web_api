@@ -295,16 +295,31 @@ def update_account(user_id):
 def update_post(post_id):
     conn = db_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+    now = datetime.datetime.now(timezone(timedelta(hours=8)))
+    word_month, str_day = date_to_words(now.month, now.day)
+    str_hour = number_formatting(now.hour)
+    str_minute = number_formatting(now.minute)
+    str_sec = number_formatting(now.second)
+    current_date = """{} {}, {} {}:{}:{}""".format(word_month,
+                                                  str_day,
+                                                  now.year,
+                                                  str_hour,
+                                                  str_minute,
+                                                  str_sec)
+    
     updated_title = request.json.get('title')
     updated_content  = request.json.get('content')
 
     update_query = """ UPDATE public."post"
                         SET title='{}',
-                            content='{}'
+                            content='{}',
+                            date_posted='{}'
                         WHERE id={}"""
 
     cursor.execute(update_query.format(updated_title,
                                        updated_content,
+                                       current_date,
                                        post_id))
     
     conn.commit()
