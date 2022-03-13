@@ -291,5 +291,28 @@ def update_account(user_id):
 
     return user_schema.jsonify(account)
 
+@app.route('/update_post/<post_id>', methods=['PUT'])
+def update_post(post_id):
+    conn = db_connection()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    updated_title = request.json.get('title')
+    updated_content  = request.json.get('content')
+
+    update_query = """ UPDATE public."post"
+                        SET title='{}',
+                            content='{}'
+                        WHERE id={}"""
+
+    cursor.execute(update_query.format(updated_title,
+                                       updated_content,
+                                       post_id))
+    
+    conn.commit()
+
+    cursor.execute("SELECT * FROM public.\"post\" WHERE id={}".format(post_id))
+    post = cursor.fetchone()
+
+    return post_schema.jsonify(post)
+
 if __name__ == "__main__":
     app.run()
