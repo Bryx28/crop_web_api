@@ -329,5 +329,17 @@ def update_post(post_id):
 
     return post_schema.jsonify(post)
 
+@app.route('/delete_post/<post_id>', methods=['DELETE'])
+def delete_post(post_id):
+    conn = db_connection()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+    cursor.execute("DELETE FROM public.\"post\" WHERE id=5")
+    post = cursor.fetchone()
+
+    conn.commit()
+
+    return post_schema.jsonify(post)
+
 if __name__ == "__main__":
     app.run()
