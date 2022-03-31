@@ -143,6 +143,28 @@ def create():
 
     return user_schema.jsonify(new_user)
 
+@app.route('/create_mobile', methods=['POST'])
+def create():
+    args = request.args
+    user_fname = args.get('user_fname')
+    user_mname = args.get('user_mname')
+    user_lname = args.get('user_lname')
+    username = args.get('username')
+    email = args.get('email')
+    password = args.get('password')
+
+    new_user = User(user_fname = user_fname, 
+                    user_mname = user_mname, 
+                    user_lname = user_lname,
+                    username = username,
+                    email = email,
+                    password = password)
+    
+    db.session.add(new_user)
+    db.session.commit()
+
+    return user_schema.jsonify(new_user)
+
 @app.route('/recommendation', methods=['GET', 'POST'])
 def recommendation():
     conn = db_connection()
