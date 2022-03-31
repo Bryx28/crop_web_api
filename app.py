@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+from flask_bcrypt import Bcrypt
 from sqlalchemy import desc
 import datetime, random, psycopg2
 from datetime import timezone, timedelta
@@ -12,6 +13,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://kwqxcelviwbiyf:570b87e2f2fa138774cb2df0572e7359316ea44c17be8d7dcfe56192724c8f45@ec2-3-211-228-251.compute-1.amazonaws.com:5432/dfqt1p61srvec0'
 app.config['SECRET_KEY'] = 'tH3s3iS@s3cr3tk3Y'
 app.config['ALLOW_PRIVATE_REPOS'] = True
+bcrypt = Bcrypt(app)
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
@@ -242,6 +244,21 @@ def existing_username():
     exist = cursor.fetchone()
     user = user_schema.dump(exist)
     return user_schema.jsonify(user)
+
+@app.route("/validate_pass", methods=['GET'])
+def validate_pass():
+    args = request.args
+    encrpyted = args.get("encrypted")
+    password = args.get("password")
+    if bcrypt.check_password_hash(encrpyted, password):
+        access = {
+                    "access_granted": 1
+                }
+    else:
+        access = {
+                    "access_granted": 0
+                }
+    return jsonify(access)
 
 @app.route('/existing_email/<email>', methods=['GET'])
 def existing_email(email):
