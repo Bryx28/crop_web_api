@@ -144,7 +144,7 @@ def create():
     return user_schema.jsonify(new_user)
 
 @app.route('/create_mobile', methods=['POST'])
-def create():
+def create_mobile():
     args = request.args
     user_fname = args.get('user_fname')
     user_mname = args.get('user_mname')
