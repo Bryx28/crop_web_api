@@ -230,10 +230,11 @@ def get_post(post_id):
     else:
         return post_schema.jsonify()
 
-@app.route('/existing_username/<username>', methods=['GET'])
+@app.route("/existing_username/<username>", methods=['GET'])
 def existing_username(username):
     conn = db_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    print(username)
     cursor.execute("SELECT * FROM public.\"user\" WHERE username='{}'".format(username))
     exist = cursor.fetchone()
     user = user_schema.dump(exist)
