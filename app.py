@@ -165,6 +165,16 @@ def create_mobile():
 
     return user_schema.jsonify(new_user)
 
+@app.route("/encrypt_pass", methods=['GET'])
+def encrpyt_pass():
+    args = request.args
+    unencrypted = args.get('password')
+    hashed_pw = bcrypt.generate_password_hash(unencrypted).decode('utf-8')
+    encrypted = {
+                    "hashed_pass":hashed_pw
+                }
+    return jsonify(encrypted)
+
 @app.route('/recommendation', methods=['GET', 'POST'])
 def recommendation():
     conn = db_connection()
