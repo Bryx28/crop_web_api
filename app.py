@@ -203,9 +203,9 @@ def recommendation():
         new_prediction = Recommendations(date=current_date,
                                          device_number=device_num,
                                          recommended = recommended_crop,
-                                         nitrogen_content=nitrogen_content,
-                                         phosphorous_content=phosphorous_content,
-                                         potassium_content=potassium_content,
+                                         nitrogen_content=nitrogen_desc,
+                                         phosphorous_content=phosphorous_desc,
+                                         potassium_content=potassium_desc,
                                          ph_level_content=ph_level_content)
 
         db.session.add(new_prediction)
