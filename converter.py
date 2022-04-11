@@ -16,3 +16,40 @@ def number_formatting(time):
     else:
         str_num = str(time)
     return str_num
+
+def nitrogen_descriptive(number):
+    if number >= 0 and number <= 63:
+        desc = "Low"
+    elif number >= 64 and number <= 127:
+        desc = "Medium"
+    elif number >= 128 and number <= 191:
+        desc = "High"
+    elif number >= 192 and number <= 255:
+        desc = "Very High"
+    return desc
+
+def phosphorous_descriptive(number):
+    if number >= 0 and number <= 51:
+        desc = "Low"
+    elif number >= 52 and number <= 102:
+        desc = "Moderately Low"
+    elif number >= 103 and number <= 153:
+        desc = "Moderately High"
+    elif number >= 154 and number <= 204:
+        desc = "High"
+    elif number >= 205 and number <= 255:
+        desc = "Very High"
+    return desc
+
+def potassium_descriptive(number):
+    if number >= 0 and number <= 51:
+        desc = "Low"
+    elif number >= 52 and number <= 102:
+        desc = "Sufficient"
+    elif number >= 103 and number <= 153:
+        desc = "Sufficient+"
+    elif number >= 154 and number <= 204:
+        desc = "Sufficient++"
+    elif number >= 205 and number <= 255:
+        desc = "Sufficient+++"
+    return desc

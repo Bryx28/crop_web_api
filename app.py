@@ -84,9 +84,9 @@ class Recommendations(db.Model):
     date = db.Column(db.String(50), nullable=False)
     device_number = db.Column(db.String(20), nullable=False)
     recommended = db.Column(db.String(50), nullable=False)
-    nitrogen_content = db.Column(db.Integer, nullable=False)
-    phosphorous_content = db.Column(db.Integer, nullable=False)
-    potassium_content = db.Column(db.Integer, nullable=False)
+    nitrogen_content = db.Column(db.String(50), nullable=False)
+    phosphorous_content = db.Column(db.String(50), nullable=False)
+    potassium_content = db.Column(db.String(50), nullable=False)
     ph_level_content = db.Column(db.Float, nullable=False)
 
 db.create_all()
@@ -197,7 +197,9 @@ def recommendation():
         potassium_content = request.json.get('potassium')
         ph_level_content = request.json.get('ph_level')
         recommended_crop = random.choice(['Rice', 'Maize', 'Corn', 'Banana', 'Watermelon'])
-
+        nitrogen_desc = nitrogen_descriptive(nitrogen_content)
+        phosphorous_desc = phosphorous_descriptive(phosphorous_content)
+        potassium_desc = potassium_descriptive(potassium_content)
         new_prediction = Recommendations(date=current_date,
                                          device_number=device_num,
                                          recommended = recommended_crop,
