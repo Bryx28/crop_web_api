@@ -7,7 +7,7 @@ from sqlalchemy import desc
 import datetime, random, psycopg2
 from datetime import timezone, timedelta
 import psycopg2.extras
-from converter import date_to_words, number_formatting
+from converter import *
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://kwqxcelviwbiyf:570b87e2f2fa138774cb2df0572e7359316ea44c17be8d7dcfe56192724c8f45@ec2-3-211-228-251.compute-1.amazonaws.com:5432/dfqt1p61srvec0'
