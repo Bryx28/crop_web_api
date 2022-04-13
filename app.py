@@ -180,6 +180,13 @@ def recommendation():
     conn = db_connection()
     cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     if request.method == "POST":
+        #Row Counter
+        cursor.execute("SELECT COUNT(*) FROM public.\"recommendations\"")
+        x = cursor.fetchone()
+        conn.commit()
+        if x[0] > 15:
+            cursor.execute("DELETE FROM public.\"recommendations\"")
+            conn.commit()
         now = datetime.datetime.now(timezone(timedelta(hours=8)))
         word_month, str_day = date_to_words(now.month, now.day)
         str_hour = number_formatting(now.hour)
