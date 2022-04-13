@@ -18,38 +18,38 @@ def number_formatting(time):
     return str_num
 
 def nitrogen_descriptive(number):
-    if number >= 0 and number <= 63:
+    if number >= 0 and number <= 107:
         desc = "Low"
-    elif number >= 64 and number <= 127:
+    elif number >= 107 and number <= 214:
         desc = "Medium"
-    elif number >= 128 and number <= 191:
+    elif number >= 214 and number <= 249:
         desc = "High"
-    elif number >= 192 and number <= 255:
+    elif number >= 250 and number <= 255:
         desc = "Very High"
     return desc
 
 def phosphorous_descriptive(number):
-    if number >= 0 and number <= 51:
+    if number >= 0 and number <= 75:
         desc = "Low"
-    elif number >= 52 and number <= 102:
+    elif number >= 76 and number <= 113:
         desc = "Moderately Low"
-    elif number >= 103 and number <= 153:
+    elif number >= 114 and number <= 150:
         desc = "Moderately High"
-    elif number >= 154 and number <= 204:
+    elif number >= 151 and number <= 250:
         desc = "High"
-    elif number >= 205 and number <= 255:
+    elif number >= 251 and number <= 255:
         desc = "Very High"
     return desc
 
 def potassium_descriptive(number):
-    if number >= 0 and number <= 51:
+    if number >= 0 and number <= 75:
         desc = "Low"
-    elif number >= 52 and number <= 102:
+    elif number >= 76 and number <= 113:
         desc = "Sufficient"
-    elif number >= 103 and number <= 153:
+    elif number >= 114 and number <= 150:
         desc = "Sufficient+"
-    elif number >= 154 and number <= 204:
+    elif number >= 151 and number <= 250:
         desc = "Sufficient++"
-    elif number >= 205 and number <= 255:
+    elif number >= 251 and number <= 255:
         desc = "Sufficient+++"
     return desc
