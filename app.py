@@ -8,6 +8,8 @@ import datetime, random, psycopg2
 from datetime import timezone, timedelta
 import psycopg2.extras
 from converter import *
+from joblib import load
+import warnings
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://kwqxcelviwbiyf:570b87e2f2fa138774cb2df0572e7359316ea44c17be8d7dcfe56192724c8f45@ec2-3-211-228-251.compute-1.amazonaws.com:5432/dfqt1p61srvec0'
@@ -202,14 +204,26 @@ def recommendation():
         nitrogen_content = request.json.get('nitrogen')
         phosphorous_content = request.json.get('phosphorous')
         potassium_content = request.json.get('potassium')
+        temperature = request.json.get('temperature')
+        humidity = request.json.get('humidity')
         ph_level_content = request.json.get('ph_level')
-        recommended_crop = random.choice(['Rice', 'Maize', 'Corn', 'Banana', 'Watermelon'])
+        rainfall = request.json.get('rainfall')
+        model = load('recommendation_svm_model.pkl')
+        recommended_crop = model.predict([(
+                                            nitrogen_content,
+                                            phosphorous_content,
+                                            potassium_content,
+                                            temperature,
+                                            humidity,
+                                            ph_level_content,
+                                            rainfall
+                                        )])
         nitrogen_desc = nitrogen_descriptive(nitrogen_content)
         phosphorous_desc = phosphorous_descriptive(phosphorous_content)
         potassium_desc = potassium_descriptive(potassium_content)
         new_prediction = Recommendations(date=current_date,
                                          device_number=device_num,
-                                         recommended = recommended_crop,
+                                         recommended = recommended_crop[0],
                                          nitrogen_content=nitrogen_desc,
                                          phosphorous_content=phosphorous_desc,
                                          potassium_content=potassium_desc,
@@ -402,4 +416,5 @@ def delete_post(post_id):
     return post_schema.jsonify()
 
 if __name__ == "__main__":
+    warnings.simplefilter('ignore')
     app.run()
