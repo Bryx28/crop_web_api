@@ -1,3 +1,7 @@
+import requests
+import urllib.parse
+import datetime
+
 def date_to_words(month, day):
     months = ["January", "February", "March",
               "April", "May", "June",
@@ -53,3 +57,49 @@ def potassium_descriptive(number):
     elif number >= 251 and number <= 255:
         desc = "Sufficient+++"
     return desc
+
+def current_weather(latitude, longitude):
+    main_api = "https://pro.openweathermap.org/data/2.5/weather?"
+    api_key = "d65ba15079b293faced6eb2e7895685d"
+    lat = latitude
+    lon = longitude
+    units = "metric"
+
+    url = main_api + urllib.parse.urlencode({'lat': lat,
+                                         'lon': lon,
+                                         'units': units,
+                                         'appid': api_key})
+
+    response = requests.get(url)
+    temp = response.json()['main']['temp']
+    humidity = response.json()['main']['humidity']
+
+    return temp, humidity
+
+def history_weather(latitude, longitude, scope):
+    start_days, end_days = scope
+    main_api = "https://history.openweathermap.org/data/2.5/history/city?"
+    api_key = "d65ba15079b293faced6eb2e7895685d"
+    lat = latitude
+    lon = longitude
+    units = "metric"
+    type_time = "hour"
+    end_date = datetime.datetime.now() - datetime.timedelta(end_days)
+    end = str(int(end_date.timestamp()))
+    start_date = datetime.datetime.now() - datetime.timedelta(start_days)
+    start = str(int(start_date.timestamp()))
+
+    url = main_api + urllib.parse.urlencode({'lat': lat,
+                                         'lon': lon,
+                                         'units': units,
+                                         'type': type_time, 
+                                         'start': start,
+                                         'end': end,
+                                         'appid': api_key})
+
+    response = requests.get(url)
+    rains = []
+    for a in response.json()['list']:
+        if 'rain' in a:
+            rains.append(a['rain']['1h'])
+    return rains

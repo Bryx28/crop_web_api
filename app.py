@@ -91,8 +91,6 @@ class Recommendations(db.Model):
     potassium_content = db.Column(db.String(50), nullable=False)
     ph_level_content = db.Column(db.Float, nullable=False)
 
-db.create_all()
-
 class UserSchema(ma.Schema):
     class Meta:
         fields = ("user_id", "user_image", "user_fname", "user_mname", 
@@ -204,10 +202,19 @@ def recommendation():
         nitrogen_content = request.json.get('nitrogen')
         phosphorous_content = request.json.get('phosphorous')
         potassium_content = request.json.get('potassium')
-        temperature = request.json.get('temperature')
-        humidity = request.json.get('humidity')
+        lat = request.json.get('latitude')
+        lon = request.json.get('longitude')
+        temperature, humidity = current_weather(str(lat), str(lon))
         ph_level_content = request.json.get('ph_level')
-        rainfall = request.json.get('rainfall')
+
+        #Rainfall in mm for the last 28 days (1 Month)
+        rain_list = []
+        scopes = ((27, 21), (20, 14), (13, 7), (6, 0))
+        for scope in scopes:
+            rain_list.append(history_weather(str(lat), str(lon), scope))
+        rainfall = 0
+        for a in rain_list:
+            rainfall += sum(a)
         model = load('recommendation_svm_model.pkl')
         recommended_crop = model.predict([(
                                             nitrogen_content,
