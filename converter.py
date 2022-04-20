@@ -1,6 +1,5 @@
 import requests
 import urllib.parse
-import datetime
 
 def date_to_words(month, day):
     months = ["January", "February", "March",
@@ -76,18 +75,13 @@ def current_weather(latitude, longitude):
 
     return temp, humidity
 
-def history_weather(latitude, longitude, scope):
-    start_days, end_days = scope
+def history_weather(latitude, longitude, start, end):
     main_api = "https://history.openweathermap.org/data/2.5/history/city?"
     api_key = "d65ba15079b293faced6eb2e7895685d"
     lat = latitude
     lon = longitude
     units = "metric"
     type_time = "hour"
-    end_date = datetime.datetime.now() - datetime.timedelta(end_days)
-    end = str(int(end_date.timestamp()))
-    start_date = datetime.datetime.now() - datetime.timedelta(start_days)
-    start = str(int(start_date.timestamp()))
 
     url = main_api + urllib.parse.urlencode({'lat': lat,
                                          'lon': lon,

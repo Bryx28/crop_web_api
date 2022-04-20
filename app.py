@@ -211,7 +211,11 @@ def recommendation():
         rain_list = []
         scopes = ((27, 21), (20, 14), (13, 7), (6, 0))
         for scope in scopes:
-            rain_list.append(history_weather(str(lat), str(lon), scope))
+            end_date = datetime.datetime.now() - datetime.timedelta(scope[1])
+            end = str(int(end_date.timestamp()))
+            start_date = datetime.datetime.now() - datetime.timedelta(scope[0])
+            start = str(int(start_date.timestamp()))
+            rain_list.append(history_weather(str(lat), str(lon), start, end))
         rainfall = 0
         for a in rain_list:
             rainfall += sum(a)
