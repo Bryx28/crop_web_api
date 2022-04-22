@@ -254,6 +254,19 @@ def recommendation():
         else:
             return crop_schema.jsonify()
 
+@app.route('/dash_info', methods=['GET'])
+def dash_info():
+    conn = db_connection()
+    cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    cursor.execute("SELECT recommended FROM public.\"recommendations\"")
+    crops = cursor.fetchall()
+    crop_list = [x[0] for x in crops]
+    count = [0 for x in range(len(crop_list))]
+    crop_dict = dict(zip(crop_list, count))
+
+    crop_dict_res = crop_counter(crop_list, crop_dict)
+    return jsonify(crop_dict_res)
+
 @app.route('/new_post', methods=['POST'])
 def new_post():
     now = datetime.datetime.now(timezone(timedelta(hours=8)))

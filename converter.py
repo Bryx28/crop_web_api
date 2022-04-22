@@ -20,6 +20,14 @@ def number_formatting(time):
         str_num = str(time)
     return str_num
 
+def crop_counter(crop_list, crop_dict):
+    for x in crop_list:
+        for crop in crop_dict:
+            if x == crop:
+                crop_dict[crop] += 1
+    
+    return crop_dict
+
 def nitrogen_descriptive(number):
     if number >= 0 and number <= 107:
         desc = "Low"
