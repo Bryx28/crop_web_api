@@ -198,14 +198,14 @@ def recommendation():
                                                       str_hour,
                                                       str_minute,
                                                       str_sec)
-        device_num = request.json.get('device_number')
-        nitrogen_content = request.json.get('nitrogen')
-        phosphorous_content = request.json.get('phosphorous')
-        potassium_content = request.json.get('potassium')
-        lat = request.json.get('latitude')
-        lon = request.json.get('longitude')
+        device_num = request.json.get('dev_num')
+        nitrogen_content = request.json.get('n')
+        phosphorous_content = request.json.get('p')
+        potassium_content = request.json.get('k')
+        lat = request.json.get('lat')
+        lon = request.json.get('long')
         temperature, humidity = current_weather(str(lat), str(lon))
-        ph_level_content = request.json.get('ph_level')
+        ph_level_content = request.json.get('ph')
 
         #Rainfall in mm for the last 28 days (1 Month)
         rain_list = []
