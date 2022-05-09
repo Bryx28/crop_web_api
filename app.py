@@ -263,10 +263,11 @@ def dash_info():
     cursor.execute("SELECT recommended FROM public.\"recommendations\"")
     crops = cursor.fetchall()
     crop_list = [x[0] for x in crops]
+    all_crops = [x[0] for x in crops.split(',')]
     count = [0 for x in range(len(crop_list))]
     crop_dict = dict(zip(crop_list, count))
 
-    crop_dict_res = crop_counter(crop_list, crop_dict)
+    crop_dict_res = crop_counter(all_crops, crop_dict)
     return jsonify(crop_dict_res)
 
 @app.route('/new_post', methods=['POST'])
