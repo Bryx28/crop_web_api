@@ -1,0 +1,7 @@
+.slugignore
+
+*.csv
+*.pkl
+datagen.py
+db.py
+weather.py
