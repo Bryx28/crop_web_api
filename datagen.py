@@ -55,23 +55,17 @@ def current_weather(latitude, longitude):
 import pandas as pd
 import random
 
-def data_gen(lat, lon, scopes, temp, humid, csv_name):
+def data_gen(temp_range, humidity_range, rainfall_range, csv_name):
     temp_data = []
     humid_data = []
     rainfall_data = []
-    rain_list = []
-    rainfall = 0
-    for scope in scopes:
-        rain_list.append(history_weather(lat, lon, scope))
-    for a in rain_list:
-        rainfall += sum(a)
     for b in range(100):
-        rain_fall = round(random.uniform(rainfall-20, rainfall+20), 2)
-        temperature = round(random.uniform(temp-3, temp+3), 6)
-        humidity = round(random.uniform(humid-3, humid+3), 6)
+        rain_fall = round(random.uniform(rainfall_range[0], rainfall_range[1]), 2)
+        temperature = round(random.uniform(humidity_range[0], humidity_range[1]), 6)
+        humidity = round(random.uniform(temp_range[0], temp_range[1]), 6)
         rainfall_data.append(rain_fall)
-        temp_data.append(temperature)
-        humid_data.append(humidity)
+        temp_data.append(humidity)
+        humid_data.append(temperature)
 
     new_dataf = pd.DataFrame({'temperature':temp_data,
                               'humidity':humid_data,
@@ -85,4 +79,15 @@ lon = "121.953"
 
 #Sitaw Scope
 scopes = ((27, 21), (20, 14), (13, 7), (6, 0))
-data_gen(lat, lon, scopes, "chili")
+
+temp_range = [(27, 32), (27, 31), (22, 35), (20, 35), (22, 26), (24, 35), (23, 27)]
+humidity_range = [(65, 75), (55, 65), (70, 80), (55, 65), (55, 65), (80, 90), (65, 75)]
+crops = ["sili", "tomato", "okra", "kalabasa", "sitaw", "talbos ng kamote", "talong"]
+
+rainfall_range = [(66, 83), (63, 105), (53, 113), (81, 121), (76.6, 136.6), (62.5, 125), (83, 125)]
+
+for index in range(len(temp_range)):
+    data_gen(temp_range[index], humidity_range[index], rainfall_range[index], crops[index])
+    print(f"{crops[index]}.csv is already saved.")
+    print("")
+#data_gen(lat, lon, scopes, "chili")

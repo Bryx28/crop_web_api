@@ -4,12 +4,14 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_bcrypt import Bcrypt
 from sqlalchemy import desc
-import datetime, random, psycopg2
 from datetime import timezone, timedelta
-import psycopg2.extras
 from converter import *
 from joblib import load
+from keras.models import load_model
+import datetime, random, psycopg2
+import psycopg2.extras
 import warnings
+import pandas as pd
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://kwqxcelviwbiyf:570b87e2f2fa138774cb2df0572e7359316ea44c17be8d7dcfe56192724c8f45@ec2-3-211-228-251.compute-1.amazonaws.com:5432/dfqt1p61srvec0'
@@ -219,22 +221,22 @@ def recommendation():
         rainfall = 0
         for a in rain_list:
             rainfall += sum(a)
-        model = load('recommendation_svm_model.pkl')
-        recommended_crop = model.predict([(
-                                            nitrogen_content,
-                                            phosphorous_content,
-                                            potassium_content,
-                                            temperature,
-                                            humidity,
-                                            ph_level_content,
-                                            rainfall
-                                        )])
+        model = load_model('lstm_model.h5')
+        input_df = pd.DataFrame({'N': [nitrogen_content],
+                         'P': [phosphorous_content],
+                         'K': [potassium_content],
+                         'temperature': [temperature],
+                         'humidity': [humidity],
+                         'ph': [ph_level_content],
+                         'rainfall': [rainfall]})
+        result = model.predict(input_df)
+        crops = recommended_crops(result)
         nitrogen_desc = nitrogen_descriptive(nitrogen_content)
         phosphorous_desc = phosphorous_descriptive(phosphorous_content)
         potassium_desc = potassium_descriptive(potassium_content)
         new_prediction = Recommendations(date=current_date,
                                          device_number=device_num,
-                                         recommended = recommended_crop[0],
+                                         recommended = crops,
                                          nitrogen_content=nitrogen_desc,
                                          phosphorous_content=phosphorous_desc,
                                          potassium_content=potassium_desc,
