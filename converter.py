@@ -1,4 +1,5 @@
 import requests
+from decouple import config
 import urllib.parse
 
 def date_to_words(month, day):
@@ -67,7 +68,7 @@ def potassium_descriptive(number):
 
 def current_weather(latitude, longitude):
     main_api = "https://pro.openweathermap.org/data/2.5/weather?"
-    api_key = "d65ba15079b293faced6eb2e7895685d"
+    api_key = config('API_KEY')
     lat = latitude
     lon = longitude
     units = "metric"
@@ -85,7 +86,7 @@ def current_weather(latitude, longitude):
 
 def history_weather(latitude, longitude, start, end):
     main_api = "https://history.openweathermap.org/data/2.5/history/city?"
-    api_key = "d65ba15079b293faced6eb2e7895685d"
+    api_key = config('API_KEY')
     lat = latitude
     lon = longitude
     units = "metric"
