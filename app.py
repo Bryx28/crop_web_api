@@ -1,3 +1,4 @@
+#Imported Libraries
 from flask import Flask, jsonify, request
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
@@ -13,15 +14,18 @@ import psycopg2.extras
 import warnings
 import pandas as pd
 
+#App Initiation
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = config('DATABASE_URI')
 app.config['SECRET_KEY'] = config('SECRET_KEY')
 app.config['ALLOW_PRIVATE_REPOS'] = True
 bcrypt = Bcrypt(app)
 
+#Database and Marshmallow Initiation
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
+#PostGre SQL Database Connection
 def db_connection():
     try:
         conn = psycopg2.connect(
@@ -34,6 +38,7 @@ def db_connection():
         print(e)
     return conn
 
+#Table Creation
 class User(db.Model,UserMixin):
     __tablename__ = "user"
     user_id = db.Column(db.Integer, primary_key=True)
@@ -93,6 +98,7 @@ class Recommendations(db.Model):
     potassium_content = db.Column(db.String(50), nullable=False)
     ph_level_content = db.Column(db.Float, nullable=False)
 
+#Schema Creation
 class UserSchema(ma.Schema):
     class Meta:
         fields = ("user_id", "user_image", "user_fname", "user_mname", 
@@ -112,6 +118,7 @@ class PostSchema(ma.Schema):
     class Meta:
         fields = ("id", "title", "date_posted", "content", "")
 
+#Initiate Schema for Jsonification
 user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 
@@ -124,6 +131,7 @@ user_posts_schema = UserPostSchema(many=True)
 post_schema = PostSchema()
 posts_schema = PostSchema(many=True)
 
+#Routes --------------------------------------------------------------------------------------
 @app.route('/create', methods=['POST'])
 def create():
     user_fname = request.json.get('user_fname')
