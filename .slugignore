@@ -1,5 +1,0 @@
-.slugignore
-
-datagen.py
-db.py
-weather.py
