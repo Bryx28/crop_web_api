@@ -7,14 +7,15 @@ from sqlalchemy import desc
 from datetime import timezone, timedelta
 from converter import *
 from keras.models import load_model
+from decouple import config
 import datetime, random, psycopg2
 import psycopg2.extras
 import warnings
 import pandas as pd
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://kwqxcelviwbiyf:570b87e2f2fa138774cb2df0572e7359316ea44c17be8d7dcfe56192724c8f45@ec2-3-211-228-251.compute-1.amazonaws.com:5432/dfqt1p61srvec0'
-app.config['SECRET_KEY'] = 'tH3s3iS@s3cr3tk3Y'
+app.config['SQLALCHEMY_DATABASE_URI'] = config('DATABASE_URI')
+app.config['SECRET_KEY'] = config('SECRET_KEY')
 app.config['ALLOW_PRIVATE_REPOS'] = True
 bcrypt = Bcrypt(app)
 
@@ -24,10 +25,10 @@ ma = Marshmallow(app)
 def db_connection():
     try:
         conn = psycopg2.connect(
-                host='ec2-3-211-228-251.compute-1.amazonaws.com',
-                database='dfqt1p61srvec0',
-                user='kwqxcelviwbiyf',
-                password='570b87e2f2fa138774cb2df0572e7359316ea44c17be8d7dcfe56192724c8f45'
+                host= config('HOST'),
+                database= config('DATABASE'),
+                user= config('USER'),
+                password= config('PASSWORD')
                 )
     except psycopg2.Error as e:
         print(e)
