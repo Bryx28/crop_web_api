@@ -6,7 +6,6 @@ from flask_bcrypt import Bcrypt
 from sqlalchemy import desc
 from datetime import timezone, timedelta
 from converter import *
-from joblib import load
 from keras.models import load_model
 import datetime, random, psycopg2
 import psycopg2.extras
