@@ -5,7 +5,6 @@ import psycopg2.extras
 
 #date = arrow.utcnow()
 
-
 conn = psycopg2.connect(
     host='ec2-3-211-228-251.compute-1.amazonaws.com',
     database='dfqt1p61srvec0',
